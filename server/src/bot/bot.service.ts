@@ -21,6 +21,8 @@ export class BotService implements OnModuleInit {
       },
     });
 
+    const webAppUrl = 'https://inside360.ru'
+
 
     await this.botCommands(bot, commands);
     await this.botMessage(bot);
@@ -79,16 +81,15 @@ export class BotService implements OnModuleInit {
             reply_markup: {
               inline_keyboard: [
                 [
-                  { text: '⭐️ Картинка', callback_data: 'image' },
-                  { text: '⭐️ Видео', callback_data: 'video' },
+                  { text: '⭐️ Информация о компании', callback_data: 'info' },
+                  { text: '⭐️ Услуги компании', callback_data: 'services' },
                 ],
                 [
-                  { text: '⭐️ Аудио', callback_data: 'audio' },
-                  { text: '⭐️ Голосовое сообщение', callback_data: 'voice' },
+                  { text: 'Перейти на наш сайт', callback_data: 'inside360'},
                 ],
                 [
-                  { text: '⭐️ Контакт', callback_data: 'contact' },
-                  { text: '⭐️ Геолокация', callback_data: 'location' },
+                  { text: '⭐️ Кейсы', callback_data: 'cases' },
+                  { text: '⭐️ Форма обратной связи', callback_data: 'contact' },
                 ],
                 [
                   { text: '❌ Закрыть меню', callback_data: 'close' },
@@ -96,22 +97,19 @@ export class BotService implements OnModuleInit {
               ],
             },
           });
-        }
-        
-          // Логика обработки всех кнопок
-          else if(msg.text == '❌ Закрыть меню') {
+        } else if(msg.text == '❌ Закрыть меню') {
 
-            await this.bot.sendMessage(chatId, 'Меню закрыто', {
-
-                reply_markup: {
-        
-                    remove_keyboard: true
-        
-                }
-        
-            })
-        
-        }
+          await this.bot.sendMessage(msg.chat.id, 'Меню закрыто', {
+      
+              reply_markup: {
+      
+                  remove_keyboard: true
+      
+              }
+      
+          })
+      
+      }
           else {
             await this.bot.sendMessage(chatId, msg.text)
           }
@@ -136,32 +134,62 @@ export class BotService implements OnModuleInit {
     });
 
 
+    // Обработка inline кнопок
     this.bot.on('callback_query', async (query) => {
       const chatId = query.message.chat.id;
       const data = query.data;
+      const webAppUrl = 'https://inside360.ru'
     
-      if (data === 'image') {
-        // Отправка изображения
-        await this.bot.sendMessage(chatId, 'Вы выбрали картинку!');
-      } else if (data === 'video') {
-        // Отправка видео
-        await this.bot.sendMessage(chatId, 'Вы выбрали видео!');
-      } else if (data === 'audio') {
-        // Отправка аудио
-        await this.bot.sendMessage(chatId, 'Вы выбрали аудио!');
-      } else if (data === 'voice') {
-        // Отправка голосового сообщения
-        await this.bot.sendMessage(chatId, 'Вы выбрали голосовое сообщение!');
-      } else if (data === 'contact') {
-        // Отправка контакта
-        await this.bot.sendMessage(chatId, 'Вы выбрали контакт!');
-      } else if (data === 'location') {
-        // Отправка геолокации
-        await this.bot.sendMessage(chatId, 'Вы выбрали геолокацию!');
-      } else if (data === 'close') {
-        // Закрытие меню
-        await this.bot.answerCallbackQuery(query.id, { text: 'Меню закрыто!' });
+      if(data == 'info') {
+
+        await this.bot.sendMessage(chatId, 'Вы выбрали Инфо', {
+           reply_markup: {
+
+                remove_keyboard: true
+    
+            }
+        })
+
+      } else if (data == 'services') {
+
+          await this.bot.sendMessage(chatId, 'Вы выбрали Услуги', {
+             reply_markup: {
+
+                remove_keyboard: true
+    
+            }
+          })
+          
+      } else if (data == 'cases') {
+        
+          await this.bot.sendMessage(chatId, 'Вы выбрали Кейсы', {
+             reply_markup: {
+
+                remove_keyboard: true
+    
+            }
+          })
+          
+      } else if (data == 'inside360') {
+          await this.bot.sendMessage(chatId, 'Заполните форму: ', {
+            reply_markup: {
+              inline_keyboard: [
+                [{text: 'Отправить заявку', web_app: { url: webAppUrl}}]
+              ]
+            }
+          })
       }
+      
+      else if (data == 'contact') {
+        
+         await this.bot.sendMessage(chatId, 'Вы выбрали контакты')
+          
+      } else if (data === 'close') {
+        await this.bot.answerCallbackQuery(query.id, {
+          text: 'Меню закрыто!',
+          show_alert: false
+        });
+      } 
     });
     
 
@@ -201,7 +229,7 @@ export class BotService implements OnModuleInit {
     });
   }
   
-  }
+}
 
 
 
@@ -211,4 +239,4 @@ export class BotService implements OnModuleInit {
   //     data
   //   })
   // }
-}
+
